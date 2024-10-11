@@ -37,8 +37,6 @@ class Physarum:
         self.hist = np.zeros([self.height, self.width])
         
         self.count = 0
-        self.last_x = np.copy(self.x)
-        self.last_y = np.copy(self.y)
 
         self._update_velocity()
         self._update_sensing_positions()
@@ -74,7 +72,7 @@ class Physarum:
     def set_heading_rate(self, heading_rate_deg: float):
         self.heading_rate = float(heading_rate_deg) * np.pi/180
 
-    def sense_pbc(self):
+    def sense(self):
         self._update_sensing_positions()
         sx = np.int32(np.round(self.sx))
         sy = np.int32(np.round(self.sy))
@@ -108,22 +106,10 @@ class Physarum:
         self.heading[right] = heading_right[right]
         self.heading[random] = heading_random[random]
         
-    def move_pbc(self):
-        self.last_x = np.copy(self.x)
-        self.last_y = np.copy(self.y)
+    def move(self):
         self._update_velocity()
-
-        self.x = (self.x + self.vx)
-        self.y = (self.y + self.vy)
-
-        x_exceed = np.logical_or(self.x<0, self.x>=self.height)
-        y_exceed = np.logical_or(self.y<0, self.y>=self.width)
-
-        self.x = self.x % self.height
-        self.y = self.y % self.width
-
-        self.last_x[x_exceed] = self.x[x_exceed]
-        self.last_y[y_exceed] = self.y[y_exceed]
+        self.x = (self.x + self.vx) % self.height
+        self.y = (self.y + self.vy) % self.width
                 
     def deposit(self, deposit_amount: float = 1):
         edges_x = np.arange(0, self.height+1) - 0.5
@@ -145,9 +131,9 @@ class Physarum:
     def run(self):
         tic = time.time()
 
-        self.sense_pbc()
+        self.sense()
         self.rotate()
-        self.move_pbc()
+        self.move()
         self.deposit()
         self.diffuse_and_decay()
         toc = time.time()
