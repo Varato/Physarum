@@ -42,12 +42,13 @@ class Physarum:
         self._update_velocity()
         self._update_sensing_positions()
 
-    def reset(self, num: int):
-        self.x = np.random.rand(num) * (self.height - 1) #[0, height-1)
-        self.y = np.random.rand(num) * (self.width - 1)  #[0, width-1)
-        self.heading = np.random.rand(num) * np.pi * 2
+    def reset(self):
+        print("reset")
+        self.x = np.random.rand(self.num) * (self.height - 1) #[0, height-1)
+        self.y = np.random.rand(self.num) * (self.width - 1)  #[0, width-1)
+        self.heading = np.random.rand(self.num) * np.pi * 2
     
-        self.sensing_value = np.zeros([3, num])
+        self.sensing_value = np.zeros([3, self.num])
         self.trail_map = np.zeros([self.height, self.width])
         self.hist = np.zeros([self.height, self.width])
         
@@ -66,11 +67,11 @@ class Physarum:
     def set_sensing_dist(self, sensing_dist: float):
         self.sensing_dist = float(sensing_dist)
 
-    def set_sensing_angle(self, sensing_angle: float):
-        self.sensing_angles = np.array([0, float(sensing_angle), -float(sensing_angle)])
+    def set_sensing_angle(self, sensing_angle_deg: float):
+        self.sensing_angles = np.array([0, float(sensing_angle_deg), -float(sensing_angle_deg)]) * np.pi/180
 
-    def set_heading_rate(self, heading_rate: float):
-        self.heading_rate = float(heading_rate)
+    def set_heading_rate(self, heading_rate_deg: float):
+        self.heading_rate = float(heading_rate_deg) * np.pi/180
 
     def sense_pbc(self):
         self._update_sensing_positions()

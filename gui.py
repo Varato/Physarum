@@ -12,6 +12,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 
 contrast_factor = 2
+reset_flag = False
 
 def normalize_trail_map(trail_map):
     x = trail_map * contrast_factor
@@ -59,8 +60,11 @@ if __name__=="__main__":
 
     after_id = None
     def update_ani():
-        global after_id
-        m.deposit_food(food_map)
+        global after_id, reset_flag
+        # m.deposit_food(food_map)
+        if reset_flag:
+            m.reset()
+            reset_flag = False
         m.run()
 
         scat1.set_offsets(np.array([m.y, -m.x]).T)
@@ -79,9 +83,9 @@ if __name__=="__main__":
                  #min, max, resolution, default, command
         "speed": (0.0, 5, 0.5, m.speed, m.set_speed),
         "sensing_dist": (0, 100, 1, m.sensing_dist, m.set_sensing_dist),
-        "sensing_angle": (10/180*np.pi, 170/180*np.pi, 5/180*np.pi, m.sensing_angles[1], m.set_sensing_angle),
-        "heading_rate": (0/180*np.pi, 180/180*np.pi, 5/180*np.pi, m.heading_rate, m.set_heading_rate),
-        "filter_sigma": (0, 3, 0.1, m.filter_sigma, m.set_filter_sigma),
+        "sensing_angle": (20, 120, 0.5, m.sensing_angles[1] * 180/np.pi, m.set_sensing_angle),
+        "heading_rate": (0, 120, 1, m.heading_rate * 180/np.pi, m.set_heading_rate),
+        "diffusion_factor": (0, 3, 0.1, m.filter_sigma, m.set_filter_sigma),
         "decay_factor": (0.5, 1.0, 0.01, m.decay_factor, m.set_decay_factor),
         "contrast_factor": (0.1, 10, 0.1, contrast_factor, set_contrast_factor),
     })
@@ -101,7 +105,9 @@ if __name__=="__main__":
         slider.grid(column=1, row=i)
         slider.set(default_value)
 
-    update_ani()
+    def on_reset(event=None):
+        global reset_flag
+        reset_flag = True
 
     def on_destroy(event):
         global after_id
@@ -113,5 +119,7 @@ if __name__=="__main__":
         root.destroy()
         root.quit()
 
+    root.bind("<space>", on_reset)
     root.bind("<Destroy>", on_destroy)
-    root.mainloop()
+    update_ani()
+    tkinter.mainloop()
