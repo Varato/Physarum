@@ -25,15 +25,15 @@ def set_contrast_factor(x):
 
 if __name__=="__main__":
     m = Physarum(num = 3000,
-                 height = 480,
-                 width = 720)
+                 height = 300,
+                 width = 400)
 
-    blbl = imageio.v2.imread('imgs/bilibili-480.png')
-    blbl_gray = 0.2989 * blbl[:, :, 0] + 0.5870 * blbl[:, :, 1] + 0.1140 * blbl[:, :, 2]
-    blbl_gray /= blbl.max()
+    # blbl = imageio.v2.imread('imgs/bilibili-480.png')
+    # blbl_gray = 0.2989 * blbl[:, :, 0] + 0.5870 * blbl[:, :, 1] + 0.1140 * blbl[:, :, 2]
+    # blbl_gray /= blbl.max()
 
-    food_map = np.zeros([m.height, m.width])
-    food_map[:, 120:120+480] = blbl_gray
+    # food_map = np.zeros([m.height, m.width])
+    # food_map[:, 120:120+480] = blbl_gray
 
 
     fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(6, 8))
@@ -104,6 +104,9 @@ if __name__=="__main__":
                                orient="horizontal")
         slider.grid(column=1, row=i)
         slider.set(default_value)
+
+    msg = tkinter.Label(master=config_pannel, text="Number of Agents: {}\nHit space bar to reset".format(m.num), pady=10)
+    msg.grid(column=0, row=len(config_sliders))
 
     def on_reset(event=None):
         global reset_flag
