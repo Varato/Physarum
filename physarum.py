@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from scipy.ndimage import gaussian_filter
 
@@ -142,12 +143,15 @@ class Physarum:
         np.clip(self.trail_map, a_min=0, a_max=1.0, out=self.trail_map)
 
     def run(self):
+        tic = time.time()
+
         self.sense_pbc()
         self.rotate()
         self.move_pbc()
         self.deposit()
         self.diffuse_and_decay()
-        print("step {:d}, n = {:d}, hist max: {:f}".format(self.count, self.x.shape[0], self.hist.max()))
+        toc = time.time()
+        print("step {:d}, n = {:d}, hist max: {:f}, time: {:.3f}ms".format(self.count, self.x.shape[0], self.hist.max(), 1000*(toc-tic)))
         self.count += 1
         
     def _update_velocity(self):
